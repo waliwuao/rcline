@@ -13,11 +13,11 @@ class Collide:
 
         if type1 == 'line' and type2 == 'line':
             return Collide._line_line_collision(entity1, entity2)        
-        if (type1 == 'cat' and type2 == 'line'):
+        if (type1 == 'circle' and type2 == 'line'):
             return Collide._circle_line_collision(entity1, entity2)
-        if (type1 == 'line' and type2 == 'cat'):
+        if (type1 == 'line' and type2 == 'circle'):
             return Collide._circle_line_collision(entity2, entity1)
-        if type1 == 'cat' and type2 == 'cat':
+        if type1 == 'circle' and type2 == 'circle':
             return Collide._circle_circle_collision(entity1, entity2)
         
         return False

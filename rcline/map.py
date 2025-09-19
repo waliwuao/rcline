@@ -109,7 +109,7 @@ class Map:
             self.title, 
             color=DARK_GRAY,
             fontsize=14,
-            pad=15,
+            pad=20,
             fontweight='medium'
         )
         self.ax.set_aspect('equal')
@@ -120,6 +120,7 @@ class Map:
         for spine in ['top', 'right']:
             self.ax.spines[spine].set_visible(False)
         for spine in ['bottom', 'left']:
+            self.ax.spines[spine].set_visible(True)
             self.ax.spines[spine].set_color(GRID_MAJOR_COLOR)
             self.ax.spines[spine].set_linewidth(0.8)
         
@@ -134,7 +135,7 @@ class Map:
             self.title, 
             color=DARK_GRAY,
             fontsize=14,
-            pad=15,
+            pad=20,
             fontweight='medium'
         )
         self.ax.set_aspect('equal')
@@ -145,6 +146,7 @@ class Map:
         for spine in ['top', 'right']:
             self.ax.spines[spine].set_visible(False)
         for spine in ['bottom', 'left']:
+            self.ax.spines[spine].set_visible(True)
             self.ax.spines[spine].set_color(GRID_MAJOR_COLOR)
             self.ax.spines[spine].set_linewidth(0.8)
 
@@ -164,7 +166,7 @@ class Map:
             interval=interval,
             blit=True
         )
-        plt.tight_layout()
+        plt.tight_layout(rect=[0, 0, 1, 0.95])
         plt.show()
 
     def stop_simulation(self):

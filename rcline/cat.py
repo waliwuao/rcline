@@ -1,4 +1,3 @@
-# rcline/cat.py
 import matplotlib.pyplot as plt
 import keyboard
 import numpy as np
@@ -13,7 +12,7 @@ class Cat(Entity):
         super().__init__(color)
         self.x = x
         self.y = y
-        self.type = 'cat'
+        self.type = 'circle'
         self.radius = radius
         self.vx = vx
         self.vy = vy
@@ -28,7 +27,7 @@ class Cat(Entity):
 
     def draw(self, ax):
         circle_color = ACCENT_COLOR if self.colliding else self.color
-        current_radius = self.radius * self.pulse_factor
+        current_radius = self.radius * self.pulse_factor if self.colliding else self.radius
         
         circle = plt.Circle(
             (self.x, self.y), 
@@ -97,9 +96,8 @@ class Cat(Entity):
         if self.colliding:
             self.pulse_factor = max(1.0, self.pulse_factor - 0.05)
         else:
-            self.pulse_factor += self.pulse_direction
-            if self.pulse_factor > 1.05 or self.pulse_factor < 0.95:
-                self.pulse_direction *= -1
+            self.pulse_factor = 1.0
+            self.pulse_direction = 0.001
 
     def _handle_keyboard(self):
         if keyboard.is_pressed('down'):
@@ -115,6 +113,12 @@ class Cat(Entity):
         for entity in entity_list:
             if entity is self:
                 continue
+            
+            if entity.type == 'polygon' and entity.solid:
+                for line in entity.get_lines():
+                    if line.solid and Collide.check_collision(self, line):
+                        return True
+            
             if Collide.check_collision(self, entity):
                 return True
         return False

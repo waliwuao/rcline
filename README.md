@@ -9,6 +9,8 @@
 4. [创建实体](#4-创建实体)
    - [创建猫(Cat)](#41-创建猫cat)
    - [创建线(Line)](#42-创建线line)
+   - [创建多边形(Polygon)](#43-创建多边形polygon)
+   - [创建圆形(Circle)](#44-创建圆形circle)
 5. [创建地图(Map)](#5-创建地图map)
 6. [运行模拟](#6-运行模拟)
 7. [进阶操作](#7-进阶操作)
@@ -22,7 +24,7 @@ pip install rcline
 ```
 
 ```python
-from rcline import Cat, Line, Map
+from rcline import Cat, Line, Polygon, Circle, Map
 ```
 
 ## 2. 核心概念
@@ -32,6 +34,8 @@ rcline 库主要包含以下核心组件：
 - **实体(Entity)**: 所有可在地图上显示的对象的基类
 - **猫(Cat)**: 可移动的圆形实体，可以是可控的
 - **线(Line)**: 直线实体，有普通线和实线两种（实线可碰撞）
+- **多边形(Polygon)**: 由多条线段组成的闭合或开放图形，支持碰撞检测
+- **圆形(Circle)**: 圆形线条实体，可设置为实线（可碰撞）或普通线
 - **地图(Map)**: 包含所有实体的场景，负责运行模拟
 - **碰撞检测(Collide)**: 内置的碰撞检测系统，自动处理实体间的碰撞
 
@@ -109,6 +113,60 @@ dashed_line = Line(
 )
 ```
 
+### 4.3 创建多边形(Polygon)
+
+`Polygon` 类用于创建多边形实体，由多个点连接形成，常用参数：
+
+- `points`: 点坐标列表，格式为 [(x1,y1), (x2,y2), ..., (xn,yn)]
+- `color`: 颜色
+- `solid`: 是否为实线（True/False，实线可碰撞）
+- `close`: 是否闭合多边形（True/False）
+
+示例：
+
+```python
+# 创建一个三角形实线多边形（可碰撞）
+triangle = Polygon(
+    points=[(5,5), (10,5), (7.5,10)],
+    solid=True,
+    close=True  # 闭合多边形
+)
+
+# 创建一个开放的虚线多边形（不可碰撞）
+open_poly = Polygon(
+    points=[(2,2), (4,6), (6,3), (8,7)],
+    solid=False,
+    close=False  # 不闭合
+)
+```
+
+### 4.4 创建圆形(Circle)
+
+`Circle` 类用于创建圆形线条实体，常用参数：
+
+- `x`, `y`: 圆心坐标
+- `radius`: 半径
+- `color`: 颜色
+- `solid`: 是否为实线（True/False，实线可碰撞）
+
+示例：
+
+```python
+# 创建一个实线圆形障碍物（可碰撞）
+solid_circle = Circle(
+    x=10, y=10,
+    radius=2,
+    solid=True
+)
+
+# 创建一个虚线圆形标记（不可碰撞）
+dashed_circle = Circle(
+    x=15, y=8,
+    radius=3,
+    solid=False
+)
+```
+
 ## 5. 创建地图(Map)
 
 `Map` 类用于创建模拟场景，常用参数：
@@ -153,10 +211,11 @@ large_map.start_simulation(interval=50)
 
 ### 7.1 碰撞检测
 
-rcline 库会自动处理碰撞检测：
-- 猫与实线会发生碰撞
+rcline 库会自动处理多种碰撞检测：
+- 猫与实线/实线多边形/实线圆形会发生碰撞
 - 猫与猫之间会发生碰撞
-- 实线与实线之间会发生碰撞检测
+- 线与线之间会发生碰撞检测
+- 圆形与线/圆形之间会发生碰撞检测
 
 ### 7.2 自定义颜色
 
@@ -165,19 +224,24 @@ rcline 库会自动处理碰撞检测：
 - 十六进制："#FF0000", "#3B82F6"
 - RGB 元组：(1.0, 0.5, 0.0)
 
+库中还提供了预设颜色常量，可直接使用：
+```python
+from rcline import PRIMARY_COLOR, SECONDARY_COLOR, ACCENT_COLOR
+```
+
 ### 7.3 实体更新
 
-每个实体都有 `update()` 方法，在模拟过程中会被定期调用。你可以继承 `Cat` 或 `Line` 类并重写此方法来实现自定义行为。
+每个实体都有 `update()` 方法，在模拟过程中会被定期调用。你可以继承 `Cat`、`Line`、`Polygon` 或 `Circle` 类并重写此方法来实现自定义行为。
 
 ## 8. 示例代码
 
-下面是一个完整的示例，创建一个包含多只猫和多条线的场景：
+下面是一个完整的示例，创建一个包含多只猫、线、多边形和圆形的场景：
 
 ```python
-from rcline import Cat, Line, Map
+from rcline import Cat, Line, Polygon, Circle, Map
 
 # 创建地图
-sim_map = Map(width=25, height=20, title="猫和线的模拟")
+sim_map = Map(width=25, height=20, title="猫和几何图形的模拟")
 
 # 创建几只猫
 player_cat = Cat(
@@ -205,10 +269,20 @@ enemy_cat2 = Cat(
 # 创建一些线
 solid_line1 = Line(5, 7, 15, 7, solid=True)
 solid_line2 = Line(15, 7, 15, 13, solid=True)
-solid_line3 = Line(15, 13, 5, 13, solid=True)
 
-dashed_line1 = Line(5, 9, 13, 9, solid=False)
-dashed_line2 = Line(5, 11, 13, 11, solid=False)
+# 创建一个多边形
+hexagon = Polygon(
+    points=[(10,10), (12,10), (13,12), (12,14), (10,14), (9,12)],
+    solid=True,
+    close=True
+)
+
+# 创建一个圆形障碍物
+solid_circle = Circle(
+    x=18, y=10,
+    radius=1.5,
+    solid=True
+)
 
 # 添加所有实体到地图
 sim_map.add_entity(player_cat)
@@ -216,17 +290,15 @@ sim_map.add_entity(enemy_cat1)
 sim_map.add_entity(enemy_cat2)
 sim_map.add_entity(solid_line1)
 sim_map.add_entity(solid_line2)
-sim_map.add_entity(solid_line3)
-sim_map.add_entity(dashed_line1)
-sim_map.add_entity(dashed_line2)
+sim_map.add_entity(hexagon)
+sim_map.add_entity(solid_circle)
 
 # 开始模拟
 sim_map.start_simulation(interval=40)
 ```
 
-运行这个示例，你将看到一个有边界的场景，里面有一只你可以控制的蓝色猫和两只自动移动的红色猫，还有一些实线（红色）和虚线（灰色），猫会与实线和其他猫发生碰撞。
+运行这个示例，你将看到一个包含多种几何形状的场景，可控的蓝色猫会与实线、多边形和圆形障碍物发生碰撞。
 
 ---
 
 希望这个教程能帮助你快速了解 rcline 库的基本使用方法。通过组合不同的实体和参数，你可以创建各种有趣的模拟场景！
-
