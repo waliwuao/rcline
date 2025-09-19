@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rcline"
+version = "0.2.0"
+authors = [
+  { name = "WallyHao", email = "1276672206@qq.com" }
+]
+description = "A 2D simulation package for cat and line interaction with collision detection"
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "Apache" }
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Topic :: Scientific/Engineering :: Visualization",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = [
+  "matplotlib>=3.5.0",
+  "numpy>=1.21.0",
+  "keyboard>=0.13.5",
+]
+
+[project.urls]
+Homepage = "https://github.com/waliwuao/rcline"
+"Bug Tracker" = "https://github.com/waliwuao/rcline/issues"
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=7.0.0",
+  "flake8>=4.0.0",
+  "black>=22.0.0",
+]
