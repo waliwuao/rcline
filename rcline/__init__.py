@@ -12,7 +12,7 @@ from .colors import (
     BACKGROUND_COLOR, GRID_MAJOR_COLOR, GRID_MINOR_COLOR
 )
 
-__version__ = "0.3.0"
+__version__ = "0.4.0"
 __author__ = "Wally Hao"
 __description__ = "A 2D simulation package for cat and line interaction with collision detection"
 __all__ = [

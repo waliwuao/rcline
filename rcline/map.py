@@ -25,10 +25,10 @@ class Map:
         self._add_boundary_lines()
 
     def _add_boundary_lines(self):
-        top_line = Line(0, self.height, self.width, self.height, solid=True)
-        bottom_line = Line(0, 0, self.width, 0, solid=True)
-        left_line = Line(0, 0, 0, self.height, solid=True)
-        right_line = Line(self.width, 0, self.width, self.height, solid=True)
+        top_line = Line([(0, self.height), (self.width, self.height)], solid=True)
+        bottom_line = Line([(0, 0), (self.width, 0)], solid=True)
+        left_line = Line([(0, 0), (0, self.height)], solid=True)
+        right_line = Line([(self.width, 0), (self.width, self.height)], solid=True)
         for line in [top_line, bottom_line, left_line, right_line]:
             self.add_entity(line)
 

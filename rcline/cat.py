@@ -1,17 +1,17 @@
 import matplotlib.pyplot as plt
-import keyboard
 import numpy as np
 from .entity import Entity
 from .collide import Collide
 from .colors import ENTITY_COLORS, ACCENT_COLOR
+import keyboard
 
 class Cat(Entity):
-    def __init__(self, x, y, color=None, radius=1, vx=0, vy=0, ax=0, ay=0, move_acceleration=2,
-                 friction=0.9, controllable=False):
+    def __init__(self, point, radius=1, color=None, vx=0, vy=0, ax=0, ay=0, move_acceleration=2,
+                 friction=1, controllable=False):
         color = color or ENTITY_COLORS['cat']
         super().__init__(color)
-        self.x = x
-        self.y = y
+        self.x = point[0]
+        self.y = point[1]
         self.type = 'circle'
         self.radius = radius
         self.vx = vx
@@ -24,6 +24,7 @@ class Cat(Entity):
         self.colliding = False
         self.pulse_factor = 1.0
         self.pulse_direction = 0.001
+        self.collision_normal = None
 
     def draw(self, ax):
         circle_color = ACCENT_COLOR if self.colliding else self.color
@@ -82,15 +83,40 @@ class Cat(Entity):
         self.x += self.vx * dt
         self.y += self.vy * dt
 
+        self.collision_normal = None
         self.colliding = self._check_collision(entity_list)
         
         if self.colliding:
             self.x, self.y = old_x, old_y
-            self.vx *= 0
-            self.vy *= 0
+            
+            if self.controllable:
+                self.vx *= 0
+                self.vy *= 0
+            else:
+                if self.collision_normal is not None:
+                    self._reflect_velocity()
+            
             self.pulse_factor = 1.2
         
         self._update_pulse()
+
+    def _reflect_velocity(self):
+        if self.collision_normal is None:
+            return
+            
+        nx, ny = self.collision_normal
+        norm = np.hypot(nx, ny)
+        if norm == 0:
+            return
+        nx /= norm
+        ny /= norm
+        
+        v = np.array([self.vx, self.vy])
+        dot_product = np.dot(v, [nx, ny])
+        reflected_v = v - 2 * dot_product * np.array([nx, ny])
+        
+        restitution = 1
+        self.vx, self.vy = reflected_v * restitution
 
     def _update_pulse(self):
         if self.colliding:
@@ -117,8 +143,21 @@ class Cat(Entity):
             if entity.type == 'polygon' and entity.solid:
                 for line in entity.get_lines():
                     if line.solid and Collide.check_collision(self, line):
+                        (x1, y1), (x2, y2) = line.get_points()
+                        dx = x2 - x1
+                        dy = y2 - y1
+                        self.collision_normal = (dy, -dx)
                         return True
             
             if Collide.check_collision(self, entity):
+                if entity.type == 'line' and entity.solid:
+                    (x1, y1), (x2, y2) = entity.get_points()
+                    dx = x2 - x1
+                    dy = y2 - y1
+                    self.collision_normal = (dy, -dx)
+                elif entity.type == 'circle':
+                    dx = self.x - entity.x
+                    dy = self.y - entity.y
+                    self.collision_normal = (dx, dy)
                 return True
         return False

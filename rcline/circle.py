@@ -4,12 +4,12 @@ from .entity import Entity
 from .colors import ENTITY_COLORS
 
 class Circle(Entity):
-    def __init__(self, x, y, radius, color=None, solid=True):
+    def __init__(self, point, radius, color=None, solid=True):
         color = color or (ENTITY_COLORS['solid_line'] if solid else ENTITY_COLORS['line'])
         super().__init__(color)
         
-        self.x = x
-        self.y = y
+        self.x = point[0]
+        self.y = point[1]
         self.radius = radius
         self.solid = solid
         self.type = 'circle'

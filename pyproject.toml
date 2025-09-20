@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "rcline"
-version = "0.3.0"
+version = "0.4.0"
 authors = [
   { name = "WallyHao", email = "1276672206@qq.com" }
 ]
