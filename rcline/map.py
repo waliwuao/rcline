@@ -2,6 +2,7 @@ from cProfile import label
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import matplotlib.patches as mpatches
+import numpy as np
 from .entity import Entity
 from .line import Line
 from .cat import Cat
@@ -9,11 +10,11 @@ from .collide import Collide
 from .colors import BACKGROUND_COLOR, GRID_MAJOR_COLOR, GRID_MINOR_COLOR, DARK_GRAY, ENTITY_COLORS
 
 class Map:
-    def __init__(self, width=10, height=10, title="Simulation Map", grid_step=1):
+    def __init__(self, width=10, height=10, title="Simulation Map", grid=1):
         self.width = width
         self.height = height
         self.title = title
-        self.grid_step = grid_step
+        self.grid_step = grid
         self.entity_list = []
         self.fig, self.ax = plt.subplots(facecolor=BACKGROUND_COLOR, figsize=(8, 8))
         self.animation = None
@@ -51,47 +52,31 @@ class Map:
             self.entity_list.remove(entity)
 
     def _draw_grid(self):
-        for y in range(0, self.height + 1, self.grid_step):
-            self.ax.axhline(
-                y=y, 
-                color=self.grid_major_color, 
-                linestyle='-', 
-                linewidth=0.8,
-                zorder=1
-            )
-        for x in range(0, self.width + 1, self.grid_step):
-            self.ax.axvline(
-                x=x, 
-                color=self.grid_major_color, 
-                linestyle='-', 
-                linewidth=0.8,
-                zorder=1
-            )
+        self.ax.grid(
+            True,
+            which='major',
+            color=self.grid_major_color,
+            linestyle='-',
+            linewidth=0.8,
+            zorder=1
+        )
+        
+        self.ax.grid(
+            True,
+            which='minor',
+            color=self.grid_minor_color,
+            linestyle='-',
+            linewidth=0.3,
+            alpha=0.7,
+            zorder=1
+        )
+        
+        self.ax.set_xticks(np.arange(0, self.width + self.grid_step, self.grid_step), minor=False)
+        self.ax.set_yticks(np.arange(0, self.height + self.grid_step, self.grid_step), minor=False)
         
         sub_step = self.grid_step / 5
-        for y in [i * sub_step for i in range(int(self.height / sub_step) + 1)]:
-            if y % self.grid_step != 0:
-                self.ax.axhline(
-                    y=y, 
-                    color=self.grid_minor_color, 
-                    linestyle='-', 
-                    linewidth=0.3,
-                    alpha=0.7,
-                    zorder=1
-                )
-        for x in [i * sub_step for i in range(int(self.width / sub_step) + 1)]:
-            if x % self.grid_step != 0:
-                self.ax.axvline(
-                    x=x, 
-                    color=self.grid_minor_color, 
-                    linestyle='-', 
-                    linewidth=0.3,
-                    alpha=0.7,
-                    zorder=1
-                )
-        
-        self.ax.set_xticks(range(0, self.width + 1, self.grid_step))
-        self.ax.set_yticks(range(0, self.height + 1, self.grid_step))
+        self.ax.set_xticks(np.arange(0, self.width + sub_step, sub_step), minor=True)
+        self.ax.set_yticks(np.arange(0, self.height + sub_step, sub_step), minor=True)
         
         self.ax.tick_params(
             axis='both', 

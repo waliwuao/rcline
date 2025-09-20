@@ -171,7 +171,7 @@ dashed_circle = Circle(
 
 - `width`, `height`: 地图宽和高
 - `title`: 模拟窗口标题
-- `grid_step`: 网格间距
+- `grid`: 网格间距
 
 地图方法：
 
@@ -188,7 +188,7 @@ large_map = Map(
     width=30, 
     height=20, 
     title="大型模拟场景",
-    grid_step=2  # 网格间距为2
+    grid=2  # 网格间距为2
 )
 ```
 
