@@ -45,7 +45,7 @@ rcline 库主要包含以下核心组件：
 
 ```python
 # 创建地图
-sim_map = Map(width=20, height=15, title="我的第一个模拟")
+sim_map = Map(width=20, height=15, title="map")
 
 # 创建一只可控的猫，初始位置在(10, 7)
 cat = Cat(point=(10, 7), radius=0.5, controllable=True)
@@ -170,7 +170,7 @@ dashed_circle = Circle(
 `Map` 类用于创建模拟场景，常用参数：
 
 - `width`, `height`: 地图宽和高
-- `title`: 模拟窗口标题
+- `title`: 模拟窗口标题(英文）
 - `grid`: 网格间距
 
 地图方法：
@@ -258,7 +258,7 @@ from rcline import PRIMARY_COLOR, SECONDARY_COLOR, ACCENT_COLOR, ENTITY_COLORS
 from rcline import Cat, Line, Polygon, Circle, Map
 
 # 创建地图
-sim_map = Map(width=25, height=20, title="猫和几何图形的模拟")
+sim_map = Map(width=25, height=20, title="cat_sim")
 
 # 创建几只猫
 player_cat = Cat(
@@ -317,5 +317,6 @@ sim_map.start_simulation(interval=40)
 运行这个示例，你将看到一个包含多种几何形状的场景，可控的蓝色猫会与实线、多边形和圆形障碍物发生碰撞，并在碰撞时显示脉冲效果，红色猫会自动移动并在碰撞时反弹。
 
 ---
+
 
 希望这个教程能帮助你快速了解 rcline 库的基本使用方法。通过组合不同的实体和参数，你可以创建各种有趣的模拟场景！
